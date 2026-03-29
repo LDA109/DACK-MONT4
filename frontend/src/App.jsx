@@ -14,6 +14,7 @@ import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Profile from './pages/Profile';
 import CategoryPage from './pages/CategoryPage';
+import VNPayReturn from './pages/VNPayReturn';
 
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -42,6 +43,7 @@ function AppRoutes() {
       <Route path="/category/:slug" element={<CategoryPage />} />
       <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
       <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+      <Route path="/vnpay-return" element={<ProtectedRoute><VNPayReturn /></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 

@@ -91,4 +91,10 @@ export const adminAPI = {
   toggleUser: (id) => api.put(`/admin/users/${id}/toggle`),
 };
 
+// Payment
+export const paymentAPI = {
+  createVNPayPayment: (orderId) => api.post('/payment/vnpay-create', { orderId }),
+  vnpayReturn: (params) => api.get('/payment/vnpay-return', { params }),
+};
+
 export default api;

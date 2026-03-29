@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { orderAPI } from '../services/api';
+import { orderAPI, paymentAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -38,12 +38,27 @@ export default function Checkout() {
         paymentMethod: form.paymentMethod,
         note: form.note,
       });
-      await clearCart();
-      toast.success('Đặt hàng thành công! 🎉');
-      navigate(`/orders`);
+
+      // Nếu là VNPay, redirect sang trang thanh toán
+      if (form.paymentMethod === 'vnpay') {
+        try {
+          const paymentRes = await paymentAPI.createVNPayPayment(res.data.data._id);
+          // Redirect to VNPay
+          window.location.href = paymentRes.data.data.paymentUrl;
+        } catch (err) {
+          toast.error(err.response?.data?.message || 'Lỗi tạo thanh toán VNPay');
+          setLoading(false);
+        }
+      } else {
+        await clearCart();
+        toast.success('Đặt hàng thành công! 🎉');
+        navigate(`/orders`);
+        setLoading(false);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Đặt hàng thất bại');
-    } finally { setLoading(false); }
+      setLoading(false);
+    }
   };
 
   const cities = ['Hà Nội', 'TP. Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Biên Hoà', 'Nha Trang', 'Huế', 'Buôn Ma Thuột', 'Quy Nhơn', 'Vũng Tàu', 'Khác'];
@@ -90,6 +105,7 @@ export default function Checkout() {
               {[
                 { key: 'cod', label: '💵 Thanh toán khi nhận hàng (COD)', desc: 'Thanh toán bằng tiền mặt khi nhận hàng' },
                 { key: 'banking', label: '🏦 Chuyển khoản ngân hàng', desc: 'Chuyển khoản trước, giao hàng sau' },
+                { key: 'vnpay', label: '🎯 VNPay', desc: 'Thanh toán trực tuyến qua cổng VNPay' },
               ].map(opt => (
                 <label key={opt.key} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '14px 16px', border: `2px solid ${form.paymentMethod === opt.key ? 'var(--primary)' : 'var(--gray-200)'}`, borderRadius: 'var(--radius)', cursor: 'pointer', marginBottom: 10, background: form.paymentMethod === opt.key ? 'var(--primary-light)' : 'white' }}>
                   <input type="radio" name="payment" value={opt.key} checked={form.paymentMethod === opt.key} onChange={() => setForm(f => ({...f, paymentMethod: opt.key}))} style={{ marginTop: 2 }} />

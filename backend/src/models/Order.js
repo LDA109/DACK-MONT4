@@ -20,8 +20,11 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'shipping', 'delivered', 'cancelled'],
     default: 'pending',
   },
-  paymentMethod: { type: String, enum: ['cod', 'banking'], default: 'cod' },
+  paymentMethod: { type: String, enum: ['cod', 'banking', 'vnpay'], default: 'cod' },
   paymentStatus: { type: String, enum: ['unpaid', 'paid'], default: 'unpaid' },
+  vnpayTransactionId: { type: String, default: null },
+  vnpayAmount: { type: Number, default: null },
+  vnpayCreateDate: { type: Date, default: null },
   shippingAddress: {
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
