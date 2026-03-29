@@ -14,8 +14,18 @@ const VNPayReturn = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
+        // Convert searchParams to object
+        const params = Object.fromEntries(searchParams);
+        
+        // Check if we have VNPay params
+        if (!params.vnp_Amount || !params.vnp_TxnRef) {
+          setStatus('error');
+          toast.error('Không tìm thấy thông tin thanh toán');
+          return;
+        }
+
         // Call backend to verify payment
-        const res = await paymentAPI.vnpayReturn(Object.fromEntries(searchParams));
+        const res = await paymentAPI.vnpayReturn(params);
         
         if (res.data.success) {
           setStatus('success');
@@ -27,6 +37,7 @@ const VNPayReturn = () => {
           toast.error(res.data.message);
         }
       } catch (err) {
+        console.error('Payment verification error:', err);
         setStatus('error');
         toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
       }

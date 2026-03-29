@@ -94,7 +94,11 @@ export const adminAPI = {
 // Payment
 export const paymentAPI = {
   createVNPayPayment: (orderId) => api.post('/payment/vnpay-create', { orderId }),
-  vnpayReturn: (params) => api.get('/payment/vnpay-return', { params }),
+  vnpayReturn: (queryParams) => {
+    // Build query string from params object
+    const queryString = new URLSearchParams(queryParams).toString();
+    return api.get(`/payment/vnpay-return?${queryString}`);
+  },
 };
 
 export default api;
