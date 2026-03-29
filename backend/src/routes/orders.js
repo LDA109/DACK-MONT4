@@ -4,7 +4,10 @@ const { createOrder, getMyOrders, getOrder, cancelOrder } = require('../controll
 const { protect } = require('../middleware/auth');
 
 router.use(protect);
-router.post('/', createOrder);
+router.post('/', (req, res, next) => {
+  console.log('[ROUTE] POST /orders received');
+  next();
+}, createOrder);
 router.get('/my', getMyOrders);
 router.get('/:id', getOrder);
 router.put('/:id/cancel', cancelOrder);

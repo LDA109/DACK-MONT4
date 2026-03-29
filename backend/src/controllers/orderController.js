@@ -5,11 +5,17 @@ const Book = require('../models/Book');
 // @POST /api/orders
 const createOrder = async (req, res) => {
   try {
+    console.log('[ORDER] 📝 Received createOrder request');
+    console.log('[ORDER] User ID:', req.user?._id);
+    console.log('[ORDER] Request body:', req.body);
+
     const { shippingAddress, paymentMethod = 'cod', note } = req.body;
     if (!shippingAddress?.fullName || !shippingAddress?.phone || !shippingAddress?.address) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ địa chỉ giao hàng.' });
     }
+    console.log('[ORDER] ✅ Address validation passed');
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.book');
+    console.log('[ORDER] 🛒 Cart found:', cart ? 'Yes' : 'No');
     if (!cart || cart.items.length === 0) return res.status(400).json({ message: 'Giỏ hàng trống.' });
 
     const items = cart.items.map(item => ({
@@ -19,12 +25,18 @@ const createOrder = async (req, res) => {
       quantity: item.quantity,
       price: item.price,
     }));
+    console.log('[ORDER] 📦 Items mapped:', items.length);
     const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const shippingFee = totalPrice >= 250000 ? 0 : 30000;
     const finalTotal = totalPrice + shippingFee;
+    console.log('[ORDER] 💰 Total:', finalTotal, 'Payment method:', paymentMethod);
+    
+    // Generate unique order code
+    const orderCode = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 4).toUpperCase();
 
     const order = await Order.create({
       user: req.user._id,
+      orderCode,
       items,
       totalPrice,
       shippingFee,
@@ -33,6 +45,7 @@ const createOrder = async (req, res) => {
       paymentMethod,
       note,
     });
+    console.log('[ORDER] ✅ Order created:', order._id);
 
     // Update sold count
     for (const item of cart.items) {
@@ -43,6 +56,8 @@ const createOrder = async (req, res) => {
 
     res.status(201).json({ success: true, message: 'Đặt hàng thành công!', data: order });
   } catch (err) {
+    console.error('[ORDER] ❌ ERROR:', err.message);
+    console.error('[ORDER] Stack:', err.stack);
     res.status(500).json({ message: err.message });
   }
 };

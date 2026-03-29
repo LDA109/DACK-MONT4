@@ -8,6 +8,20 @@ connectDB();
 
 const app = express();
 
+// Log environment on startup
+console.log('═══════════════════════════════════════════════════════');
+console.log('📋 ENVIRONMENT CONFIGURATION');
+console.log('═══════════════════════════════════════════════════════');
+console.log('PORT:', process.env.PORT || 8081);
+console.log('MONGO_URI:', process.env.MONGO_URI ? '✅ SET' : '❌ NOT SET');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ SET' : '❌ NOT SET');
+console.log('CLIENT_URL:', process.env.CLIENT_URL || 'http://localhost:5173');
+console.log('VNP_TMN_CODE:', process.env.VNP_TMN_CODE ? '✅ SET' : '❌ NOT SET');
+console.log('VNP_HASH_SECRET:', process.env.VNP_HASH_SECRET ? '✅ SET' : '❌ NOT SET');
+console.log('VNPAY_URL:', process.env.VNPAY_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html');
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL || 'http://localhost:5173');
+console.log('═══════════════════════════════════════════════════════\n');
+
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true,

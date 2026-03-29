@@ -34,11 +34,4 @@ const orderSchema = new mongoose.Schema({
   note: { type: String, default: '' },
 }, { timestamps: true });
 
-orderSchema.pre('save', function (next) {
-  if (!this.orderCode) {
-    this.orderCode = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 4).toUpperCase();
-  }
-  next();
-});
-
 module.exports = mongoose.model('Order', orderSchema);

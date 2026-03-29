@@ -39,24 +39,34 @@ export default function Checkout() {
         note: form.note,
       });
 
+      console.log('Order created:', res.data);
+
       // Nếu là VNPay, redirect sang trang thanh toán
       if (form.paymentMethod === 'vnpay') {
         try {
           const paymentRes = await paymentAPI.createVNPayPayment(res.data.data._id);
+          console.log('Payment URL:', paymentRes.data);
           // Redirect to VNPay
           window.location.href = paymentRes.data.data.paymentUrl;
-        } catch (err) {
-          toast.error(err.response?.data?.message || 'Lỗi tạo thanh toán VNPay');
+          return; // Prevent further execution
+        } catch (paymentErr) {
+          console.error('VNPay payment error:', paymentErr);
+          const errorMsg = paymentErr.response?.data?.message || paymentErr.message || 'Lỗi tạo thanh toán VNPay';
+          toast.error(errorMsg);
           setLoading(false);
+          return;
         }
       } else {
+        // COD or Banking
         await clearCart();
         toast.success('Đặt hàng thành công! 🎉');
-        navigate(`/orders`);
-        setLoading(false);
+        navigate('/orders');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Đặt hàng thất bại');
+      console.error('Create order error:', err);
+      const errorMsg = err.response?.data?.message || err.message || 'Đặt hàng thất bại';
+      toast.error(errorMsg);
+    } finally { 
       setLoading(false);
     }
   };
