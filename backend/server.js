@@ -36,6 +36,7 @@ app.use('/api/cart', require('./src/routes/cart'));
 app.use('/api/orders', require('./src/routes/orders'));
 app.use('/api/payment', require('./src/routes/payment'));
 app.use('/api/admin', require('./src/routes/admin'));
+app.use('/api/coupons', require('./src/routes/couponRoutes'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'BookStore API v1.0' }));
 
