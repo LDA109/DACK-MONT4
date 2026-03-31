@@ -101,4 +101,13 @@ export const paymentAPI = {
   },
 };
 
+// Coupons
+export const couponAPI = {
+  checkCoupon: (code, totalPrice) => api.post('/coupons/check', { code, totalPrice }),
+  getCoupons: () => api.get('/coupons'),
+  createCoupon: (data) => api.post('/coupons', data),
+  updateCoupon: (id, data) => api.put(`/coupons/${id}`, data),
+  deleteCoupon: (id) => api.delete(`/coupons/${id}`),
+};
+
 export default api;
