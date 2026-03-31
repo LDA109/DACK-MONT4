@@ -48,7 +48,15 @@ export default function AdminOrders() {
         {loading ? <div className="spinner-wrapper"><div className="spinner" /></div> : (
           <table className="admin-table">
             <thead>
-              <tr><th>Mã đơn</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Ngày đặt</th><th>Trạng thái</th><th>Cập nhật</th></tr>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Thanh toán</th>
+                <th>Tổng cộng</th>
+                <th>Ngày đặt</th>
+                <th>Trạng thái Đơn</th>
+                <th>Cập nhật</th>
+              </tr>
             </thead>
             <tbody>
               {orders.map(o => {
@@ -57,15 +65,22 @@ export default function AdminOrders() {
                   <tr key={o._id}>
                     <td style={{ fontWeight: 700, fontSize: 13 }}>#{o.orderCode}</td>
                     <td>
-                      <div style={{ fontWeight: 600, fontSize: 13 }}>{o.user?.name || 'N/A'}</div>
-                      <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>{o.user?.email}</div>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>{o.user?.name || 'Guest'}</div>
+                      <div style={{ fontSize: 11, color: 'var(--gray-500)' }}>{o.user?.email}</div>
                     </td>
-                    <td style={{ fontSize: 13 }}>{o.items?.length} sản phẩm</td>
+                    <td>
+                      <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
+                        {o.paymentMethod === 'vnpay' ? '🎯 VNPay' : o.paymentMethod === 'cod' ? '💵 COD' : '🏦 Banking'}
+                      </div>
+                      <span className={`badge ${o.paymentStatus === 'paid' ? 'badge-green' : 'badge-red'}`} style={{ fontSize: 10, padding: '2px 8px' }}>
+                        {o.paymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thu tiền'}
+                      </span>
+                    </td>
                     <td style={{ fontWeight: 800, color: 'var(--primary)' }}>{fmt(o.finalTotal)}</td>
                     <td style={{ fontSize: 12, color: 'var(--gray-500)' }}>{new Date(o.createdAt).toLocaleDateString('vi-VN')}</td>
                     <td><span className={`badge ${st.cls}`}>{st.label}</span></td>
                     <td>
-                      <select className="form-input form-select" style={{ padding: '4px 28px 4px 8px', fontSize: 12, height: 32 }}
+                      <select className="form-input form-select" style={{ padding: '4px 28px 4px 8px', fontSize: 12, height: 32, minWidth: 120 }}
                         value={o.status} onChange={(e) => updateStatus(o._id, e.target.value)}>
                         {Object.entries(STATUS_MAP).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                       </select>

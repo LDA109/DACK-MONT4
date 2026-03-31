@@ -22,6 +22,7 @@ import AdminBooks from './pages/admin/AdminBooks';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminCoupons from './pages/admin/AdminCoupons';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -52,6 +53,7 @@ function AppRoutes() {
         <Route path="books" element={<AdminBooks />} />
         <Route path="categories" element={<AdminCategories />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="coupons" element={<AdminCoupons />} />
         <Route path="users" element={<AdminUsers />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
