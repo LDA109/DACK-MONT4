@@ -62,6 +62,7 @@ export default function Checkout() {
         shippingAddress: { fullName: form.fullName, phone: form.phone, address: form.address, city: form.city },
         paymentMethod: form.paymentMethod,
         note: form.note,
+        couponCode: couponData?.code || null,
       });
 
       console.log('Order created:', res.data);
