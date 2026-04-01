@@ -1,2 +1,16 @@
-﻿backend/.env
+backend/.env
 frontend/.env
+backend/.env.local
+frontend/.env.local
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+dist/
+build/
+.DS_Store
+*.log
+debug_ai_logic.js
+list_models.js
+test_full_ai.js
+test_results.log
+ai_debug.log

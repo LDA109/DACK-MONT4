@@ -110,4 +110,8 @@ export const couponAPI = {
   deleteCoupon: (id) => api.delete(`/coupons/${id}`),
 };
 
+export const aiAPI = {
+  chat: (message, history) => api.post('/ai/chat', { message, history }),
+};
+
 export default api;

@@ -24,6 +24,8 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminCoupons from './pages/admin/AdminCoupons';
 
+import FloatingChat from './components/Chatbot/FloatingChat';
+
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -69,6 +71,7 @@ export default function App() {
           <BrowserRouter>
             <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
             <AppRoutes />
+            <FloatingChat />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>
