@@ -119,7 +119,7 @@ export const couponAPI = {
   createCoupon: (data) => api.post('/coupon', data),
   updateCoupon: (id, data) => api.put(`/coupon/${id}`, data),
   deleteCoupon: (id) => api.delete(`/coupon/${id}`),
-  checkCoupon: (code) => api.post('/coupon/check', { code }),
+  checkCoupon: (code, totalPrice) => api.post('/coupon/check', { code, totalPrice }),
 };
 
 // Payment
@@ -143,6 +143,19 @@ export const uploadAPI = {
       }
     });
   },
+};
+
+// Notifications
+export const notificationAPI = {
+  getNotifications: () => api.get('/notifications'),
+  markAsRead: (id) => api.patch(`/notifications/${id}/read`),
+  deleteNotification: (id) => api.delete(`/notifications/${id}`),
+  getUnreadCount: () => api.get('/notifications/unread/count'),
+};
+
+// AI Chat
+export const aiAPI = {
+  chat: (message, history) => api.post('/ai/chat', { message, history }),
 };
 
 export default api;

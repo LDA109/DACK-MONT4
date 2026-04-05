@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { orderAPI, paymentAPI } from '../services/api';
+import { orderAPI, paymentAPI, couponAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -14,6 +14,7 @@ export default function Checkout() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: user?.name || '',
     phone: user?.phone || '',
@@ -22,11 +23,43 @@ export default function Checkout() {
     note: '',
     paymentMethod: 'cod',
   });
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   const items = cart?.items || [];
   const totalPrice = cart?.totalPrice || 0;
-  const shippingFee = totalPrice >= 250000 ? 0 : 30000;
-  const finalTotal = totalPrice + shippingFee;
+  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const subtotal = totalPrice - discountAmount;
+  const shippingFee = subtotal >= 250000 ? 0 : 30000;
+  const finalTotal = subtotal + shippingFee;
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error('Vui lòng nhập mã giảm giá!');
+      return;
+    }
+    setCouponLoading(true);
+    try {
+      const res = await couponAPI.checkCoupon(couponCode, totalPrice);
+      if (res.data.success) {
+        setAppliedCoupon(res.data.data);
+        toast.success(res.data.message);
+        setCouponCode('');
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Lỗi kiểm tra mã giảm giá');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    toast.success('Đã xóa mã giảm giá');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,10 +182,66 @@ export default function Checkout() {
                 })}
               </div>
               <hr className="divider" />
+              
+              {/* Coupon Section */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontWeight: 700, marginBottom: 8, display: 'block', fontSize: 14 }}>🎟️ Mã giảm giá</label>
+                {appliedCoupon ? (
+                  <div style={{ background: '#e8f5e9', border: '1px solid #4caf50', borderRadius: 'var(--radius)', padding: 12, marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#2e7d32', marginBottom: 2 }}>✅ {appliedCoupon.code}</div>
+                        <div style={{ fontSize: 13, color: '#558b2f' }}>Giảm: {fmt(appliedCoupon.discountAmount)}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        style={{ background: 'none', border: 'none', color: '#d32f2f', cursor: 'pointer', fontSize: 18 }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="Nhập mã giảm giá..."
+                      className="form-input"
+                      style={{ flex: 1, fontSize: 13 }}
+                      disabled={couponLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="btn btn-primary"
+                      style={{ padding: '8px 16px', fontSize: 13 }}
+                      disabled={couponLoading}
+                    >
+                      {couponLoading ? '⏳' : '✓'}
+                    </button>
+                  </div>
+                )}
+              </div>
+              <hr className="divider" />
+              
+              {/* Price Summary */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16, fontSize: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--gray-600)' }}>Tạm tính</span>
                   <span style={{ fontWeight: 600 }}>{fmt(totalPrice)}</span>
+                </div>
+                {appliedCoupon && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4caf50' }}>
+                    <span>Giảm giá ({appliedCoupon.code})</span>
+                    <span style={{ fontWeight: 600 }}>-{fmt(appliedCoupon.discountAmount)}</span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--gray-600)' }}>Tạm tính sau giảm</span>
+                  <span style={{ fontWeight: 600 }}>{fmt(subtotal)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--gray-600)' }}>Vận chuyển</span>

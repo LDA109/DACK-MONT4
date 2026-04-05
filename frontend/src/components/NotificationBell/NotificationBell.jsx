@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import api from '../services/api';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import './NotificationBell.css';
 
 export default function NotificationBell() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -15,7 +15,7 @@ export default function NotificationBell() {
     if (!user) return;
     try {
       setLoading(true);
-      const res = await api.get('/api/notifications');
+      const res = await api.get('/notifications');
       if (res.data.success) {
         setNotifications(res.data.data);
         const unread = res.data.data.filter(n => !n.isRead).length;
@@ -43,7 +43,7 @@ export default function NotificationBell() {
   // Đánh dấu đã đọc
   const handleMarkAsRead = async (id) => {
     try {
-      await api.patch(`/api/notifications/${id}/read`);
+      await api.patch(`/notifications/${id}/read`);
       setNotifications(notifications.map(n => 
         n._id === id ? { ...n, isRead: true } : n
       ));
@@ -56,7 +56,7 @@ export default function NotificationBell() {
   // Xóa notification
   const handleDelete = async (id) => {
     try {
-      await api.delete(`/api/notifications/${id}`);
+      await api.delete(`/notifications/${id}`);
       const notification = notifications.find(n => n._id === id);
       setNotifications(notifications.filter(n => n._id !== id));
       if (notification && !notification.isRead) {

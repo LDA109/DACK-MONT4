@@ -5,17 +5,27 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('user')); } catch { return null; }
+    try { 
+      const stored = localStorage.getItem('user');
+      const parsed = stored ? JSON.parse(stored) : null;
+      console.log('[AUTH INIT] User from localStorage:', parsed);
+      return parsed;
+    } catch (e) { 
+      console.error('[AUTH INIT] Error parsing user:', e);
+      return null;
+    }
   });
   const [loading, setLoading] = useState(false);
 
   const saveAuth = (token, userData) => {
+    console.log('[AUTH SAVE] Saving user:', userData);
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
+    console.log('[AUTH LOGOUT] Clearing auth data');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
@@ -23,6 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await authAPI.login({ email, password });
+    console.log('[AUTH LOGIN] Response:', res.data);
     saveAuth(res.data.token, res.data.user);
     return res.data;
   };
@@ -48,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = user?.role === 'admin';
+  console.log('[AUTH STATE] User:', user, 'isAdmin:', isAdmin);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, googleLogin, logout, updateProfile, isAdmin }}>

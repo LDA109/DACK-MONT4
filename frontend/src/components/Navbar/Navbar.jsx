@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import NotificationBell from '../NotificationBell/NotificationBell';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -47,6 +48,9 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="navbar-actions">
+          {/* Notifications */}
+          <NotificationBell />
+          
           {/* Cart */}
           <Link to="/cart" className="nav-icon-btn">
             <span className="icon">🛒</span>

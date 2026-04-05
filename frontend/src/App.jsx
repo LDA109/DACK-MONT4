@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import FloatingChat from './components/Chatbot/FloatingChat';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -30,8 +31,16 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
-  if (adminOnly && user.role !== 'admin') return <Navigate to="/" replace />;
+  console.log('[ROUTE PROTECTION] Checking access - user:', user, 'adminOnly:', adminOnly);
+  if (!user) {
+    console.log('[ROUTE PROTECTION] No user, redirecting to login');
+    return <Navigate to="/login" replace />;
+  }
+  if (adminOnly && user.role !== 'admin') {
+    console.log('[ROUTE PROTECTION] Admin required, user role:', user.role);
+    return <Navigate to="/" replace />;
+  }
+  console.log('[ROUTE PROTECTION] Access granted');
   return children;
 };
 
@@ -73,6 +82,7 @@ export default function App() {
           <BrowserRouter>
             <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
             <AppRoutes />
+            <FloatingChat />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>
