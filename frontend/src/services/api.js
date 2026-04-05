@@ -91,6 +91,37 @@ export const adminAPI = {
   toggleUser: (id) => api.put(`/admin/users/${id}/toggle`),
 };
 
+// Inventory
+export const inventoryAPI = {
+  getInventory: (params) => api.get('/inventory', { params }),
+  getInventoryByBook: (bookId) => api.get(`/inventory/book/${bookId}`),
+  createInventory: (data) => api.post('/inventory', data),
+  updateInventory: (id, data) => api.put(`/inventory/${id}`, data),
+  adjustStock: (id, data) => api.put(`/inventory/${id}/adjust`, data),
+  deleteInventory: (id) => api.delete(`/inventory/${id}`),
+  seedInventory: () => api.post('/inventory/seed/auto'),
+};
+
+// Reviews
+export const reviewAPI = {
+  getReviews: (params) => api.get('/reviews', { params }),
+  getReviewsByBook: (bookId, params) => api.get(`/reviews/book/${bookId}`, { params }),
+  createReview: (data) => api.post('/reviews', data),
+  updateReview: (id, data) => api.put(`/reviews/${id}`, data),
+  markHelpful: (id, data) => api.post(`/reviews/${id}/helpful`, data),
+  deleteReview: (id) => api.delete(`/reviews/${id}`),
+  replyToReview: (id, data) => api.put(`/reviews/${id}/reply`, data),
+};
+
+// Coupons
+export const couponAPI = {
+  getCoupons: () => api.get('/coupon'),
+  createCoupon: (data) => api.post('/coupon', data),
+  updateCoupon: (id, data) => api.put(`/coupon/${id}`, data),
+  deleteCoupon: (id) => api.delete(`/coupon/${id}`),
+  checkCoupon: (code) => api.post('/coupon/check', { code }),
+};
+
 // Payment
 export const paymentAPI = {
   createVNPayPayment: (orderId) => api.post('/payment/vnpay-create', { orderId }),
@@ -101,17 +132,17 @@ export const paymentAPI = {
   },
 };
 
-// Coupons
-export const couponAPI = {
-  checkCoupon: (code, totalPrice) => api.post('/coupons/check', { code, totalPrice }),
-  getCoupons: () => api.get('/coupons'),
-  createCoupon: (data) => api.post('/coupons', data),
-  updateCoupon: (id, data) => api.put(`/coupons/${id}`, data),
-  deleteCoupon: (id) => api.delete(`/coupons/${id}`),
-};
-
-export const aiAPI = {
-  chat: (message, history) => api.post('/ai/chat', { message, history }),
+// Upload
+export const uploadAPI = {
+  uploadFile: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/upload', formData, {
+      headers: {
+        'Content-Type': undefined,
+      }
+    });
+  },
 };
 
 export default api;

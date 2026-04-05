@@ -1,6 +1,5 @@
 const Order = require('../models/Order');
 const vnpayService = require('../services/vnpayService');
-const Coupon = require('../models/Coupon');
 
 // @POST /api/payment/vnpay-create
 // Tạo URL thanh toán VNPay
@@ -93,14 +92,11 @@ const vnpayReturn = async (req, res) => {
     const verifyResult = vnpayService.verifyCallback(req.query);
 
     if (!verifyResult.isValid) {
-      console.error('[VNPay] V4 Signature verification failed');
       return res.status(400).json({
         success: false,
         message: 'Chữ ký không hợp lệ'
       });
     }
-
-    console.log('[VNPay] V4 Signature verified successfully');
 
     // Parse response
     const response = vnpayService.parseResponse(verifyResult.params);
@@ -115,14 +111,8 @@ const vnpayReturn = async (req, res) => {
       });
     }
 
-    // Kiểm tra amount (chuyển về integer để so sánh chính xác)
-    const vnpAmount = Math.round(response.amount);
-    if (vnpAmount !== order.finalTotal) {
-      console.warn('[VNPay] V4 Amount mismatch:', { 
-        vnpAmount, 
-        orderAmount: order.finalTotal,
-        orderCode: order.orderCode
-      });
+    // Kiểm tra amount
+    if (parseInt(response.amount) !== order.finalTotal) {
       return res.status(400).json({
         success: false,
         message: 'Số tiền không khớp'
@@ -136,11 +126,6 @@ const vnpayReturn = async (req, res) => {
       order.vnpayAmount = response.amount;
       order.vnpayCreateDate = new Date();
       await order.save();
-
-      // Tăng usedCount của coupon nếu có
-      if (order.appliedCoupon) {
-        await Coupon.findOneAndUpdate({ code: order.appliedCoupon }, { $inc: { usedCount: 1 } });
-      }
 
       return res.json({
         success: true,
@@ -178,7 +163,6 @@ const vnpayIPN = async (req, res) => {
     const verifyResult = vnpayService.verifyCallback(req.query);
 
     if (!verifyResult.isValid) {
-      console.error('[VNPay] V4 IPN Signature verification failed');
       return res.json({
         RspCode: '97',
         Message: 'Fail checksum'
@@ -199,9 +183,7 @@ const vnpayIPN = async (req, res) => {
     }
 
     // Kiểm tra amount
-    const vnpAmount = Math.round(response.amount);
-    if (vnpAmount !== order.finalTotal) {
-      console.warn('[VNPay] V4 IPN Amount mismatch:', { vnpAmount, orderAmount: order.finalTotal });
+    if (parseInt(response.amount) !== order.finalTotal) {
       return res.json({
         RspCode: '04',
         Message: 'Amount mismatch'
@@ -215,11 +197,6 @@ const vnpayIPN = async (req, res) => {
       order.vnpayAmount = response.amount;
       order.vnpayCreateDate = new Date();
       await order.save();
-
-      // Tăng usedCount của coupon nếu có
-      if (order.appliedCoupon) {
-        await Coupon.findOneAndUpdate({ code: order.appliedCoupon }, { $inc: { usedCount: 1 } });
-      }
     }
 
     // VNPay yêu cầu response này

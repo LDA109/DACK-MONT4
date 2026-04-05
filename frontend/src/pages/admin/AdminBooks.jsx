@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminAPI } from '../../services/api';
+import { adminAPI, uploadAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -23,6 +23,7 @@ export default function AdminBooks() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_BOOK);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -83,6 +84,36 @@ export default function AdminBooks() {
   };
 
   const setF = (field, val) => setForm(f => ({ ...f, [field]: val }));
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('❌ Chỉ hỗ trợ: JPEG, PNG, GIF, WebP');
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('❌ File quá lớn (tối đa 10MB)');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const res = await uploadAPI.uploadFile(file);
+      const imageUrl = res.data.file.url;
+      setF('imageUrl', imageUrl);
+      toast.success('✅ Upload ảnh thành công!');
+    } catch (err) {
+      toast.error('❌ Upload thất bại: ' + err.response?.data?.message);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   return (
     <div>
@@ -213,8 +244,39 @@ export default function AdminBooks() {
                   </>
                 )}
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                  <label className="form-label">URL Ảnh bìa</label>
-                  <input className="form-input" value={form.imageUrl} onChange={(e) => setF('imageUrl', e.target.value)} placeholder="https://..." />
+                  <label className="form-label">Ảnh bìa</label>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 8 }}>
+                    <div style={{ flex: 1 }}>
+                      <input 
+                        className="form-input" 
+                        value={form.imageUrl} 
+                        onChange={(e) => setF('imageUrl', e.target.value)} 
+                        placeholder="Dán URL ảnh..." 
+                      />
+                    </div>
+                    <label style={{
+                      padding: '8px 16px',
+                      background: 'var(--gray-100)',
+                      border: '1px solid var(--gray-300)',
+                      borderRadius: 'var(--radius)',
+                      cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: uploadingImage ? 'var(--gray-400)' : 'var(--primary)',
+                      opacity: uploadingImage ? 0.6 : 1,
+                      whiteSpace: 'nowrap',
+                      height: 'fit-content',
+                    }}>
+                      {uploadingImage ? '⏳ Đang upload...' : '📤 Upload'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        style={{ display: 'none' }}
+                      />
+                    </label>
+                  </div>
                   {form.imageUrl && <img src={form.imageUrl} alt="preview" style={{ height: 80, marginTop: 8, borderRadius: 6 }} onError={(e) => e.target.style.display = 'none'} />}
                 </div>
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>

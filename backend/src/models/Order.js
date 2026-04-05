@@ -25,8 +25,6 @@ const orderSchema = new mongoose.Schema({
   vnpayTransactionId: { type: String, default: null },
   vnpayAmount: { type: Number, default: null },
   vnpayCreateDate: { type: Date, default: null },
-  appliedCoupon: { type: String, default: null },
-  discountAmount: { type: Number, default: 0 },
   shippingAddress: {
     fullName: { type: String, required: true },
     phone: { type: String, required: true },

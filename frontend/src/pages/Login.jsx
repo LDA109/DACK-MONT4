@@ -81,10 +81,7 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--gray-50)', borderRadius: 'var(--radius)', fontSize: 12, color: 'var(--gray-500)' }}>
-            <strong>Demo Admin:</strong> admin@bookstore.com / admin123
-          </div>
+
 
           <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: 'var(--gray-500)' }}>
             Chưa có tài khoản?{' '}

@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/admin', label: '📊 Tổng quan', end: true },
   { to: '/admin/books', label: '📚 Quản lý Sách' },
   { to: '/admin/categories', label: '🗂️ Danh mục' },
+  { to: '/admin/inventory', label: '📦 Kho hàng' },
   { to: '/admin/orders', label: '📦 Đơn hàng' },
   { to: '/admin/coupons', label: '🎟️ Quản lý Coupon' },
   { to: '/admin/users', label: '👥 Người dùng' },

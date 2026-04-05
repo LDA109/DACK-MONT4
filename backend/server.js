@@ -28,6 +28,17 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 
+// File upload middleware
+const fileUpload = require('express-fileupload');
+app.use(fileUpload({
+  limits: { fileSize: 10 * 1024 * 1024 },
+  useTempFiles: false,
+}));
+
+// Serve uploaded files statically
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/books', require('./src/routes/books'));
@@ -36,8 +47,11 @@ app.use('/api/cart', require('./src/routes/cart'));
 app.use('/api/orders', require('./src/routes/orders'));
 app.use('/api/payment', require('./src/routes/payment'));
 app.use('/api/admin', require('./src/routes/admin'));
-app.use('/api/coupons', require('./src/routes/couponRoutes'));
+app.use('/api/coupon', require('./src/routes/couponRoutes'));
 app.use('/api/ai', require('./src/routes/aiRoutes'));
+app.use('/api/upload', require('./src/routes/upload'));
+app.use('/api/inventory', require('./src/routes/inventory'));
+app.use('/api/reviews', require('./src/routes/reviews'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'BookStore API v1.0' }));
 

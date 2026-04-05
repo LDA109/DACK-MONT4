@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { orderAPI, paymentAPI, couponAPI } from '../services/api';
+import { orderAPI, paymentAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const fmt = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p);
@@ -23,35 +23,10 @@ export default function Checkout() {
     paymentMethod: 'cod',
   });
 
-  const [couponCode, setCouponCode] = useState('');
-  const [couponData, setCouponData] = useState(null);
-  const [isApplying, setIsApplying] = useState(false);
-
   const items = cart?.items || [];
   const totalPrice = cart?.totalPrice || 0;
-  const discountAmount = couponData?.discountAmount || 0;
   const shippingFee = totalPrice >= 250000 ? 0 : 30000;
-  const finalTotal = Math.max(0, totalPrice - discountAmount + shippingFee);
-
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      toast.error('Vui lòng nhập mã giảm giá!');
-      return;
-    }
-    setIsApplying(true);
-    try {
-      const res = await couponAPI.checkCoupon(couponCode, totalPrice);
-      setCouponData(res.data.data);
-      toast.success(res.data.message);
-    } catch (err) {
-      console.error('Apply coupon error:', err);
-      const msg = err.response?.data?.message || 'Không thể áp dụng mã giảm giá';
-      toast.error(msg);
-      setCouponData(null);
-    } finally {
-      setIsApplying(false);
-    }
-  };
+  const finalTotal = totalPrice + shippingFee;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +37,6 @@ export default function Checkout() {
         shippingAddress: { fullName: form.fullName, phone: form.phone, address: form.address, city: form.city },
         paymentMethod: form.paymentMethod,
         note: form.note,
-        couponCode: couponData?.code || null,
       });
 
       console.log('Order created:', res.data);
@@ -180,53 +154,11 @@ export default function Checkout() {
                   <span style={{ color: 'var(--gray-600)' }}>Tạm tính</span>
                   <span style={{ fontWeight: 600 }}>{fmt(totalPrice)}</span>
                 </div>
-                {discountAmount > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)' }}>
-                    <span>Giảm giá ({couponData.code})</span>
-                    <span style={{ fontWeight: 600 }}>-{fmt(discountAmount)}</span>
-                  </div>
-                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--gray-600)' }}>Vận chuyển</span>
                   <span style={{ color: shippingFee === 0 ? 'var(--success)' : '', fontWeight: 600 }}>{shippingFee === 0 ? 'Miễn phí' : fmt(shippingFee)}</span>
                 </div>
-                
-                {/* Coupon Input */}
-                <div style={{ marginTop: 12, marginBottom: 4 }}>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      placeholder="Mã giảm giá" 
-                      value={couponCode} 
-                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      style={{ padding: '8px 12px', fontSize: 13 }}
-                      disabled={isApplying || !!couponData}
-                    />
-                    {couponData ? (
-                      <button 
-                        type="button" 
-                        className="btn btn-outline" 
-                        onClick={() => { setCouponData(null); setCouponCode(''); }}
-                        style={{ padding: '0 12px', whiteSpace: 'nowrap', fontSize: 13 }}
-                      >
-                        Hủy
-                      </button>
-                    ) : (
-                      <button 
-                        type="button" 
-                        className="btn btn-primary" 
-                        onClick={handleApplyCoupon}
-                        disabled={isApplying || !couponCode}
-                        style={{ padding: '0 12px', whiteSpace: 'nowrap', fontSize: 13 }}
-                      >
-                        {isApplying ? '...' : 'Áp dụng'}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <hr className="divider" style={{ margin: '8px 0' }} />
+                <hr className="divider" style={{ margin: '4px 0' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 20, fontWeight: 900 }}>
                   <span>Tổng cộng</span>
                   <span style={{ color: 'var(--primary)' }}>{fmt(finalTotal)}</span>

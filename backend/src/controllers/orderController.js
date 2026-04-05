@@ -1,7 +1,6 @@
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Book = require('../models/Book');
-const Coupon = require('../models/Coupon');
 
 // @POST /api/orders
 const createOrder = async (req, res) => {
@@ -10,7 +9,7 @@ const createOrder = async (req, res) => {
     console.log('[ORDER] User ID:', req.user?._id);
     console.log('[ORDER] Request body:', req.body);
 
-    const { shippingAddress, paymentMethod = 'cod', note, couponCode } = req.body;
+    const { shippingAddress, paymentMethod = 'cod', note } = req.body;
     if (!shippingAddress?.fullName || !shippingAddress?.phone || !shippingAddress?.address) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ địa chỉ giao hàng.' });
     }
@@ -28,35 +27,9 @@ const createOrder = async (req, res) => {
     }));
     console.log('[ORDER] 📦 Items mapped:', items.length);
     const totalPrice = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    
-    // Xử lý Coupon
-    let discountAmount = 0;
-    let appliedCoupon = null;
-    if (couponCode) {
-      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), isActive: true });
-      if (coupon) {
-        const now = new Date();
-        if (now >= coupon.startDate && now <= coupon.endDate && 
-           (coupon.usageLimit === null || coupon.usedCount < coupon.usageLimit) &&
-           totalPrice >= coupon.minOrderValue) {
-          
-          if (coupon.discountType === 'fixed') {
-            discountAmount = coupon.discountValue;
-          } else if (coupon.discountType === 'percentage') {
-            discountAmount = (totalPrice * coupon.discountValue) / 100;
-            if (coupon.maxDiscountAmount && discountAmount > coupon.maxDiscountAmount) {
-              discountAmount = coupon.maxDiscountAmount;
-            }
-          }
-          if (discountAmount > totalPrice) discountAmount = totalPrice;
-          appliedCoupon = coupon.code;
-        }
-      }
-    }
-
     const shippingFee = totalPrice >= 250000 ? 0 : 30000;
-    const finalTotal = Math.max(0, totalPrice - discountAmount + shippingFee);
-    console.log('[ORDER] 💰 Total:', finalTotal, 'Discount:', discountAmount, 'Payment method:', paymentMethod);
+    const finalTotal = totalPrice + shippingFee;
+    console.log('[ORDER] 💰 Total:', finalTotal, 'Payment method:', paymentMethod);
     
     // Generate unique order code
     const orderCode = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 4).toUpperCase();
@@ -67,8 +40,6 @@ const createOrder = async (req, res) => {
       items,
       totalPrice,
       shippingFee,
-      discountAmount,
-      appliedCoupon,
       finalTotal,
       shippingAddress,
       paymentMethod,
@@ -80,12 +51,6 @@ const createOrder = async (req, res) => {
     for (const item of cart.items) {
       await Book.findByIdAndUpdate(item.book._id, { $inc: { sold: item.quantity, stock: -item.quantity } });
     }
-
-    // Nếu thanh toán COD or Banking (không qua VNPay), tăng usedCount của coupon luôn
-    if (paymentMethod !== 'vnpay' && appliedCoupon) {
-      await Coupon.findOneAndUpdate({ code: appliedCoupon }, { $inc: { usedCount: 1 } });
-    }
-
     // Clear cart
     await Cart.findOneAndUpdate({ user: req.user._id }, { items: [] });
 

@@ -7,46 +7,41 @@ class VNPayService {
     this.secretKey = process.env.VNP_HASH_SECRET; // '7GAR34MDZQSHU5XMMHFUTJW9LFJARU7W'
   }
 
-  // Helper: Sort object keys and encode values (Match vnpay_nodejs sample)
+  // Helper: Sort object keys properly for VNPay
   sortObject(obj) {
-    let sorted = {};
-    let str = [];
-    let key;
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        str.push(encodeURIComponent(key));
-      }
-    }
-    str.sort();
-    for (key = 0; key < str.length; key++) {
-      sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
-    }
+    const sorted = {};
+    const keys = Object.keys(obj).sort();
+    keys.forEach(key => {
+      sorted[key] = obj[key];
+    });
     return sorted;
   }
 
-  // Tạo URL thanh toán VNPay (V4 Reference Sync)
+  // Tạo URL thanh toán VNPay
   createPaymentUrl(order, returnUrl, clientIp = '127.0.0.1') {
-    let vnp_Params = {};
+    const vnp_Params = {};
     vnp_Params['vnp_Version'] = '2.1.0';
     vnp_Params['vnp_Command'] = 'pay';
     vnp_Params['vnp_TmnCode'] = this.tmnCode;
+    
+    // Amount in VND (must be integer, in 100 VND units)
     vnp_Params['vnp_Amount'] = String(Math.floor(order.finalTotal * 100));
+    
     vnp_Params['vnp_CurrCode'] = 'VND';
-    vnp_Params['vnp_TxnRef'] = order.orderCode;
-    vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + order.orderCode;
-    vnp_Params['vnp_OrderType'] = 'other';
+    vnp_Params['vnp_TxnRef'] = order.orderCode; // Order code as transaction ref
+    vnp_Params['vnp_OrderInfo'] = order.orderCode; // SIMPLIFIED: just orderCode
+    vnp_Params['vnp_OrderType'] = 'billpayment';
     vnp_Params['vnp_Locale'] = 'vn';
+    
+    // Return URL - VNPay sẽ redirect về đây
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     
-    // IP handling
-    let finalIp = clientIp;
-    if (finalIp === '127.0.0.1' || finalIp === '::1' || finalIp.includes('localhost')) {
-      finalIp = '13.160.92.202';
-    }
-    vnp_Params['vnp_IpAddr'] = finalIp;
+    // IP address - use client IP instead of hardcoded localhost
+    vnp_Params['vnp_IpAddr'] = clientIp;
     
+    // Create date
     const date = new Date();
-    const createDate = String(date.getFullYear()) + 
+    const createDate = date.getFullYear() + 
       String(date.getMonth() + 1).padStart(2, '0') + 
       String(date.getDate()).padStart(2, '0') +
       String(date.getHours()).padStart(2, '0') +
@@ -55,75 +50,82 @@ class VNPayService {
     
     vnp_Params['vnp_CreateDate'] = createDate;
     
-    // 1. Sort and Encode (Important: encoded BEFORE signing)
-    vnp_Params = this.sortObject(vnp_Params);
+    // Sort parameters - use helper function to ensure consistent sorting
+    const sortedParams = this.sortObject(vnp_Params);
+    const sortedKeys = Object.keys(sortedParams);
     
-    // 2. Build SignData (Using encoded values)
-    const signData = Object.keys(vnp_Params)
-      .map(key => `${key}=${vnp_Params[key]}`)
+    console.log('[VNPay] Sorted keys:', sortedKeys);
+
+    // Create SignData - VNPay requires RAW values (NO URL-encoding for HMAC calculation)
+    // URL-encoding is only applied when building the final URL
+    const signData = sortedKeys
+      .map(key => `${key}=${sortedParams[key]}`)
       .join('&');
 
-    console.log('[VNPay] V4 SignData:', signData);
+    console.log('[VNPay] SignData:', signData);
+    console.log('[VNPay] Secret Key:', this.secretKey);
 
-    // 3. HMAC-SHA512
+    // Create checksum using HMAC SHA512
     const checksum = crypto
       .createHmac('sha512', this.secretKey)
-      .update(Buffer.from(signData, 'utf-8'))
+      .update(signData)
       .digest('hex');
 
-    console.log('[VNPay] V4 Checksum:', checksum);
+    console.log('[VNPay] Checksum:', checksum);
 
-    // 4. Build final URL (Params are already encoded in vnp_Params)
-    const query = Object.keys(vnp_Params)
-      .map(key => `${key}=${vnp_Params[key]}`)
-      .join('&');
+    vnp_Params['vnp_SecureHash'] = checksum;
 
-    const paymentUrl = `${this.vnpayUrl}?${query}&vnp_SecureHash=${checksum}`;
-    
-    console.log('[VNPay] V4 Payment URL created successfully');
+    // Build payment URL - NOW apply URL-encoding to all parameters for transmission
+    const paymentUrl = 
+      this.vnpayUrl + '?' + 
+      Object.entries(vnp_Params)
+        .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+        .join('&');
+
+    console.log('[VNPay] Payment URL:', paymentUrl.substring(0, 100) + '...');
+
     return paymentUrl;
   }
 
-  // Verify callback từ VNPay (V4 Reference Sync)
+  // Verify callback từ VNPay
   verifyCallback(query) {
-    const vnp_SecureHash = query['vnp_SecureHash'];
+    // Lấy vnp_SecureHash từ query
+    const vnp_SecureHash = query.vnp_SecureHash;
     
-    let vnp_Params = {};
+    // Tạo copy của query params (exclude vnp_SecureHash)
+    const vnp_Params = {};
     Object.keys(query).forEach(key => {
-      if (key.startsWith('vnp_') && 
-          key !== 'vnp_SecureHash' && 
-          key !== 'vnp_SecureHashType' &&
-          query[key] !== '' && 
-          query[key] !== null) {
+      if (key !== 'vnp_SecureHash') {
         vnp_Params[key] = query[key];
       }
     });
 
-    // 1. Sort and Encode (Using raw query params as input)
-    vnp_Params = this.sortObject(vnp_Params);
-    
-    // 2. SignData (Using encoded values)
-    const signData = Object.keys(vnp_Params)
-      .map(key => `${key}=${vnp_Params[key]}`)
+    // Sort parameters using helper function
+    const sortedParams = this.sortObject(vnp_Params);
+    const sortedKeys = Object.keys(sortedParams);
+
+    console.log('[VNPay] Verify - Sorted keys:', sortedKeys);
+
+    // Create SignData - VNPay requires RAW values (NO URL-encoding for HMAC verification)
+    const signData = sortedKeys
+      .map(key => `${key}=${sortedParams[key]}`)
       .join('&');
 
-    console.log('[VNPay] V4 Verify - SignData:', signData);
+    console.log('[VNPay] Verify - SignData:', signData);
+    console.log('[VNPay] Verify - Expected hash:', vnp_SecureHash);
 
-    // 3. Checksum
+    // Create checksum to compare
     const checksum = crypto
       .createHmac('sha512', this.secretKey)
-      .update(Buffer.from(signData, 'utf-8'))
+      .update(signData)
       .digest('hex');
 
-    // Case-insensitive comparison is safer
-    const isValid = checksum.toLowerCase() === vnp_SecureHash.toLowerCase();
-    
-    console.log('[VNPay] V4 Verify - Calculated hash:', checksum);
-    console.log('[VNPay] V4 Verify - Expected hash:', vnp_SecureHash);
-    console.log('[VNPay] V4 Verify - Match:', isValid);
+    console.log('[VNPay] Verify - Calculated hash:', checksum);
+    console.log('[VNPay] Verify - Match:', checksum === vnp_SecureHash);
 
+    // Verify
     return {
-      isValid,
+      isValid: checksum === vnp_SecureHash,
       params: vnp_Params
     };
   }
