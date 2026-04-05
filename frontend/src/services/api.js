@@ -158,4 +158,19 @@ export const aiAPI = {
   chat: (message, history) => api.post('/ai/chat', { message, history }),
 };
 
+// Search History
+export const searchHistoryAPI = {
+  getSearchHistory: (params) => api.get('/search-history', { params }),
+  addSearchHistory: (data) => api.post('/search-history', data),
+  deleteSearchHistory: (id) => api.delete(`/search-history/${id}`),
+  clearSearchHistory: () => api.delete('/search-history'),
+};
+
+// Wishlist
+export const wishlistAPI = {
+  getWishlist: () => api.get('/wishlist'),
+  addToWishlist: (bookId) => api.post('/wishlist/add', { bookId }),
+  removeFromWishlist: (bookId) => api.delete(`/wishlist/remove/${bookId}`),
+};
+
 export default api;

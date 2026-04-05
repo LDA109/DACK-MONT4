@@ -1,0 +1,292 @@
+.search-history-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.history-header h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.history-header .subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.history-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-control label {
+  font-weight: 600;
+  color: #333;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.sort-select:hover,
+.sort-select:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+.btn-clear-all {
+  padding: 8px 16px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-clear-all:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+}
+
+.history-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.history-empty p {
+  font-size: 18px;
+  color: #999;
+  margin-bottom: 30px;
+}
+
+.btn-start {
+  padding: 12px 30px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-start:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.history-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.history-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.history-table th {
+  padding: 15px;
+  text-align: left;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.history-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.history-table tbody tr:hover {
+  background-color: #f5f5ff;
+}
+
+.history-table td {
+  padding: 15px;
+  font-size: 14px;
+}
+
+.history-table .index {
+  color: #999;
+  font-weight: 500;
+  width: 35px;
+}
+
+.search-link {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.search-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-tag {
+  display: inline-block;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.results {
+  text-align: center;
+}
+
+.results-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.time {
+  color: #999;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  text-align: center;
+}
+
+.btn-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-search:hover {
+  background: #f0f0f0;
+}
+
+.btn-delete:hover {
+  background: #ffebee;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .history-table {
+    overflow-x: auto;
+  }
+
+  .history-table table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-history-page {
+    padding: 20px 15px;
+  }
+
+  .history-header h1 {
+    font-size: 24px;
+  }
+
+  .history-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .sort-control {
+    width: 100%;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
+
+  .btn-clear-all {
+    width: 100%;
+  }
+
+  .history-table {
+    font-size: 12px;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 10px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-table {
+    overflow: auto;
+  }
+
+  .history-table table {
+    min-width: 600px;
+  }
+}

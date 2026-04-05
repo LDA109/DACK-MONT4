@@ -1,0 +1,145 @@
+.recent-searches {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 16px;
+  color: white;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.searches-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.searches-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn-clear-all {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-clear-all:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.searches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-item {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.search-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.search-keyword {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.search-keyword:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.keyword-text {
+  font-weight: 500;
+}
+
+.results-count {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.btn-delete {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 67, 67, 0.6);
+}
+
+.link-view-all {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s;
+}
+
+.link-view-all:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recent-searches {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .searches-header h3 {
+    font-size: 14px;
+  }
+
+  .search-keyword {
+    font-size: 13px;
+  }
+
+  .results-count {
+    font-size: 11px;
+  }
+}

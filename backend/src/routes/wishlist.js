@@ -9,17 +9,16 @@ const {
 } = require("../controllers/wishlistController");
 
 // 2. Import middleware auth thật của nhóm
-// Lưu ý: Nếu server báo lỗi [object Object], hãy đổi thành: const { auth } = require(...);
-const auth = require("../middleware/auth");
+const { protect } = require("../middleware/auth");
 
 // 3. Định nghĩa các Route chính thức
 // Lấy danh sách yêu thích
-router.get("/", auth, getWishlist);
+router.get("/", protect, getWishlist);
 
 // Thêm sách vào danh sách
-router.post("/add", auth, addToWishlist);
+router.post("/add", protect, addToWishlist);
 
 // Xóa sách khỏi danh sách
-router.delete("/remove/:bookId", auth, removeFromWishlist);
+router.delete("/remove/:bookId", protect, removeFromWishlist);
 
 module.exports = router;

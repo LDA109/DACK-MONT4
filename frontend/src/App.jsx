@@ -17,6 +17,8 @@ import Profile from './pages/Profile';
 import CategoryPage from './pages/CategoryPage';
 import VNPayReturn from './pages/VNPayReturn';
 import Upload from './pages/Upload';
+import Wishlist from './pages/Wishlist';
+import SearchHistory from './pages/SearchHistory';
 
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -59,6 +61,8 @@ function AppRoutes() {
       <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+      <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+      <Route path="/search-history" element={<ProtectedRoute><SearchHistory /></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />
