@@ -39,7 +39,7 @@ app.use(fileUpload({
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// 🚀 Routes configuration
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/books', require('./src/routes/books'));
 app.use('/api/categories', require('./src/routes/categories'));
@@ -53,8 +53,12 @@ app.use('/api/upload', require('./src/routes/upload'));
 app.use('/api/inventory', require('./src/routes/inventory'));
 app.use('/api/reviews', require('./src/routes/reviews'));
 
+// ✨ Route của Vũ (Person 4)
+app.use('/api/user-preferences', require('./src/routes/userPreferences'));
+
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'BookStore API v1.0' }));
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: err.message || 'Internal Server Error' });
