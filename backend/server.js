@@ -70,6 +70,7 @@ app.use('/api/inventory', require('./src/routes/inventory'));
 app.use('/api/reviews', require('./src/routes/reviews'));
 app.use('/api/notifications', require('./src/routes/notification'));
 app.use('/api/wishlist', require('./src/routes/wishlist'));
+app.use('/api/search-history', require('./src/routes/searchHistory'));
 
 app.get('/api/health', (req, res) =>
   res.json({ status: 'OK', message: 'BookStore API v1.0' }),
