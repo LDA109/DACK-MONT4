@@ -80,11 +80,20 @@ export default function WishlistPage() {
         </div>
       ) : (
         <div className="wishlist-grid">
-          {books.map(book => (
-            <div key={book._id} className="wishlist-card">
+          {books.map((book, index) => {
+            // Defensive check: ensure book._id exists
+            const bookId = book?._id;
+            if (!bookId) {
+              console.warn('⚠️ Book missing _id:', book);
+              return null;
+            }
+            
+            return (
+            <div key={bookId} className="wishlist-card">
               <div 
                 className="card-image"
-                onClick={() => handleViewBook(book._id)}
+                onClick={() => handleViewBook(bookId)}
+                style={{ cursor: 'pointer' }}
               >
                 <img src={book.imageUrl} alt={book.title} />
                 <span className="badge-new">{book.category?.name || '📖'}</span>
@@ -93,7 +102,8 @@ export default function WishlistPage() {
               <div className="card-content">
                 <h3 
                   className="book-title"
-                  onClick={() => handleViewBook(book._id)}
+                  onClick={() => handleViewBook(bookId)}
+                  style={{ cursor: 'pointer' }}
                 >
                   {book.title}
                 </h3>
@@ -111,13 +121,13 @@ export default function WishlistPage() {
 
                 <div className="card-actions">
                   <button 
-                    onClick={() => handleViewBook(book._id)}
+                    onClick={() => handleViewBook(bookId)}
                     className="btn-view"
                   >
                     👁️ Xem
                   </button>
                   <button 
-                    onClick={() => handleRemove(book._id)}
+                    onClick={() => handleRemove(bookId)}
                     className="btn-remove"
                   >
                     ❌ Xóa
@@ -125,7 +135,8 @@ export default function WishlistPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

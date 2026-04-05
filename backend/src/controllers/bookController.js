@@ -55,12 +55,17 @@ const getBooks = async (req, res) => {
 
     // Auto-log search history nếu user đã login
     if (req.user) {
+      console.log('📝 Auto-logging SearchHistory for user:', req.user._id, 'keyword:', search);
       require('../models/SearchHistory').create({
         user: req.user._id,
         keyword: search || '',
         filters: { category, minPrice, maxPrice },
         resultsCount: books.length
-      }).catch(err => console.log('SearchHistory error:', err));
+      })
+        .then(doc => console.log('✅ SearchHistory saved:', doc._id))
+        .catch(err => console.error('❌ SearchHistory error:', err.message));
+    } else {
+      console.log('⚠️ User not authenticated, SearchHistory not logged');
     }
 
     res.json({

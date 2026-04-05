@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar/Navbar';
 import ProductCard from '../components/ProductCard/ProductCard';
 import Footer from '../components/Footer/Footer';
-import { bookAPI, categoryAPI } from '../services/api';
+import { bookAPI, categoryAPI, searchHistoryAPI } from '../services/api';
 
 const SORT_OPTIONS = [
   { key: 'newest', label: '🆕 Mới nhất' },
@@ -26,6 +27,7 @@ const TYPE_OPTIONS = [
 export default function Books() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
@@ -45,6 +47,20 @@ export default function Books() {
   useEffect(() => {
     categoryAPI.getCategories().then(r => setCategories(r.data.data || []));
   }, []);
+
+  // Save search history khi user search (chỉ khi có keyword)
+  useEffect(() => {
+    if (search && user) {
+      console.log('📝 Saving SearchHistory:', search);
+      searchHistoryAPI.addSearchHistory({
+        keyword: search,
+        filters: { category },
+        resultsCount: books.length
+      })
+        .then(() => console.log('✅ SearchHistory saved'))
+        .catch(err => console.error('❌ Error saving SearchHistory:', err));
+    }
+  }, [search]);
 
   useEffect(() => {
     const load = async () => {
