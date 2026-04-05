@@ -2,6 +2,7 @@ const Book = require('../models/Book');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // ===== BOOKS =====
 const adminGetBooks = async (req, res) => {
@@ -91,6 +92,37 @@ const adminUpdateOrderStatus = async (req, res) => {
     const { status } = req.body;
     const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
     if (!order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng.' });
+    
+    // ✨ TỰ ĐỘNG TẠO NOTIFICATION
+    const notificationMessages = {
+      confirmed: { 
+        title: '✅ Đơn hàng được xác nhận', 
+        message: `Đơn hàng #${order.orderCode} đã được xác nhận bởi cửa hàng` 
+      },
+      shipping: { 
+        title: '🚚 Đang vận chuyển', 
+        message: `Đơn hàng #${order.orderCode} đang trên đường tới bạn` 
+      },
+      delivered: { 
+        title: '📦 Giao hàng thành công', 
+        message: `Đơn hàng #${order.orderCode} đã được giao` 
+      },
+      cancelled: { 
+        title: '❌ Đơn hàng bị hủy', 
+        message: `Đơn hàng #${order.orderCode} đã bị hủy` 
+      },
+    };
+    
+    if (notificationMessages[status]) {
+      await Notification.create({
+        user: order.user,
+        order: order._id,
+        type: `order_${status}`,
+        title: notificationMessages[status].title,
+        message: notificationMessages[status].message,
+      }).catch(err => console.log('Notification creation error:', err));
+    }
+    
     res.json({ success: true, data: order });
   } catch (err) { res.status(400).json({ message: err.message }); }
 };
