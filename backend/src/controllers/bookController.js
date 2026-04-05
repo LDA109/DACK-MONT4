@@ -53,6 +53,16 @@ const getBooks = async (req, res) => {
       .limit(Number(limit))
       .lean();
 
+    // Auto-log search history nếu user đã login
+    if (req.user) {
+      require('../models/SearchHistory').create({
+        user: req.user._id,
+        keyword: search || '',
+        filters: { category, minPrice, maxPrice },
+        resultsCount: books.length
+      }).catch(err => console.log('SearchHistory error:', err));
+    }
+
     res.json({
       success: true,
       data: books,
