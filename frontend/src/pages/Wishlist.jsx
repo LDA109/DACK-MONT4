@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { wishlistAPI } from '../services/api';
 import '../styles/Wishlist.css';
 
 export default function WishlistPage() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [wishlist, setWishlist] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { searchHistoryAPI } from '../services/api';
 import './RecentSearches.css';
 
 export default function RecentSearches() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searches, setSearches] = useState([]);
   const [loading, setLoading] = useState(true);
