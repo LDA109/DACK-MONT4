@@ -4,6 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { searchHistoryAPI } from '../services/api';
 import '../styles/SearchHistory.css';
 
+const formatPrice = (price) => {
+  if (!price) return '0đ';
+  return price.toLocaleString('vi-VN') + 'đ';
+};
+
 export default function SearchHistoryPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -148,7 +153,7 @@ export default function SearchHistoryPage() {
                   </td>
                   <td className="filters">
                     {search.filters?.category && <span className="filter-tag">📚 {search.filters.category}</span>}
-                    {search.filters?.priceMin && <span className="filter-tag">💰 {search.filters.priceMin.toLocaleString('vi-VN')}đ</span>}
+                    {search.filters?.priceMin && <span className="filter-tag">💰 {formatPrice(search.filters.priceMin)}</span>}
                     {!search.filters?.category && !search.filters?.priceMin && '—'}
                   </td>
                   <td className="results">

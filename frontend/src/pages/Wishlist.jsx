@@ -4,6 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { wishlistAPI } from '../services/api';
 import '../styles/Wishlist.css';
 
+const formatPrice = (price) => {
+  if (!price) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+};
+
 export default function WishlistPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -101,7 +106,7 @@ export default function WishlistPage() {
                 </div>
 
                 <div className="book-price">
-                  {book.price.toLocaleString('vi-VN')} ₫
+                  {formatPrice(book?.price)}
                 </div>
 
                 <div className="card-actions">
