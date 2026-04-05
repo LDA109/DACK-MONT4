@@ -19,6 +19,7 @@ import VNPayReturn from './pages/VNPayReturn';
 import Upload from './pages/Upload';
 import Wishlist from './pages/Wishlist';
 import SearchHistory from './pages/SearchHistory';
+import UserPreferences from './pages/UserPreferences';
 
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -63,6 +64,7 @@ function AppRoutes() {
       <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
       <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
       <Route path="/search-history" element={<ProtectedRoute><SearchHistory /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><UserPreferences /></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />

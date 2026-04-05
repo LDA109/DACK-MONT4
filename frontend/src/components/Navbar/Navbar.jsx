@@ -97,6 +97,9 @@ export default function Navbar() {
                   <Link to="/search-history" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                     🔍 Lịch sử tìm kiếm
                   </Link>
+                  <Link to="/settings" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    ⚙️ Cài đặt
+                  </Link>
                   <div className="dropdown-divider" />
                   <button className="dropdown-item text-danger" onClick={() => { logout(); setDropdownOpen(false); }}>
                     🚪 Đăng xuất

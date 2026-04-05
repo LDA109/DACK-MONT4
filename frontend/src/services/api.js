@@ -173,4 +173,10 @@ export const wishlistAPI = {
   removeFromWishlist: (bookId) => api.delete(`/wishlist/remove/${bookId}`),
 };
 
+// User Preferences (Settings)
+export const userPreferencesAPI = {
+  getPreferences: () => api.get('/user-preferences'),
+  updatePreferences: (data) => api.put('/user-preferences', data),
+};
+
 export default api;
