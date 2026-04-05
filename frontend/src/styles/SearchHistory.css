@@ -2,23 +2,31 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 30px 20px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: calc(100vh - 68px);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .history-header {
   text-align: center;
   margin-bottom: 30px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
   padding-bottom: 20px;
+}
+
+:root.dark-mode .history-header {
+  border-bottom-color: rgba(255,255,255,0.1);
 }
 
 .history-header h1 {
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
 }
 
 .history-header .subtitle {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -28,8 +36,9 @@
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   border-radius: 8px;
+  transition: background-color 0.3s;
 }
 
 .sort-control {
@@ -40,17 +49,22 @@
 
 .sort-control label {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .sort-select {
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 14px;
   transition: border-color 0.2s;
+}
+
+:root.dark-mode .sort-select {
+  border-color: rgba(255,255,255,0.1);
 }
 
 .sort-select:hover,
@@ -88,7 +102,7 @@
 
 .history-empty p {
   font-size: 18px;
-  color: #999;
+  color: var(--text-secondary);
   margin-bottom: 30px;
 }
 
@@ -109,11 +123,16 @@
 }
 
 .history-table {
-  background: white;
+  background: var(--bg-secondary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+:root.dark-mode .history-table {
+  border-color: rgba(255,255,255,0.1);
 }
 
 .history-table table {
@@ -134,21 +153,26 @@
 }
 
 .history-table tbody tr {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   transition: background-color 0.2s;
 }
 
+:root.dark-mode .history-table tbody tr {
+  border-bottom-color: rgba(255,255,255,0.1);
+}
+
 .history-table tbody tr:hover {
-  background-color: #f5f5ff;
+  background-color: rgba(102, 126, 234, 0.1);
 }
 
 .history-table td {
   padding: 15px;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 .history-table .index {
-  color: #999;
+  color: var(--text-secondary);
   font-weight: 500;
   width: 35px;
 }
@@ -177,11 +201,12 @@
 
 .filter-tag {
   display: inline-block;
-  background: #f0f0f0;
+  background: var(--bg-secondary);
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
+  transition: background-color 0.3s;
 }
 
 .results {

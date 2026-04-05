@@ -1,0 +1,219 @@
+.preferences-page {
+  min-height: calc(100vh - 68px);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 40px 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.preferences-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.preferences-header {
+  margin-bottom: 32px;
+}
+
+.preferences-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.preferences-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.preferences-section {
+  background: var(--bg-secondary);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+:root.dark-mode .preferences-section {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+:root.dark-mode .preference-item {
+  border-bottom-color: rgba(255,255,255,0.05);
+}
+
+.preference-item:last-child {
+  border-bottom: none;
+}
+
+.preference-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.preference-label label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.preference-label p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.preference-control {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.preference-control select,
+.preference-control input {
+  padding: 8px 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+:root.dark-mode .preference-control select,
+:root.dark-mode .preference-control input {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.preference-control select:hover,
+.preference-control input:hover,
+.preference-control select:focus,
+.preference-control input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.preference-control input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+:root.dark-mode .btn-secondary {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+:root.dark-mode .btn-secondary:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 6px;
+  display: none;
+}
+
+.success-message.show {
+  display: block;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .preferences-page {
+    padding: 20px 16px;
+  }
+
+  .preferences-section {
+    padding: 16px;
+  }
+
+  .preference-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .preference-control {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .button-group {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

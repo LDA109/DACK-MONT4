@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ThemeProvider } from './context/ThemeContext';
 import FloatingChat from './components/Chatbot/FloatingChat';
 
 import Home from './pages/Home';
@@ -84,13 +85,15 @@ export default function App() {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
-            <AppRoutes />
-            <FloatingChat />
-          </BrowserRouter>
-        </CartProvider>
+        <ThemeProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+              <AppRoutes />
+              <FloatingChat />
+            </BrowserRouter>
+          </CartProvider>
+        </ThemeProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   );

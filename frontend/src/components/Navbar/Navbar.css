@@ -1,7 +1,12 @@
 .navbar {
-  background: white;
+  background: var(--bg-primary);
   box-shadow: 0 2px 12px rgba(0,0,0,.08);
   position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+:root.dark-mode .navbar {
+  border-bottom-color: rgba(255,255,255,0.1);
 }
 .navbar-inner {
   display: flex; align-items: center; gap: 16px;
@@ -19,8 +24,9 @@
 .nav-icon-btn {
   position: relative; width: 42px; height: 42px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: var(--radius); background: var(--gray-100);
+  border-radius: var(--radius); background: var(--bg-secondary);
   font-size: 20px; cursor: pointer; transition: var(--transition); text-decoration: none;
+  color: var(--text-primary);
 }
 .nav-icon-btn:hover { background: var(--primary-light); }
 .cart-badge {
@@ -36,9 +42,9 @@
   display: flex; align-items: center; gap: 8px;
   background: none; border: none; cursor: pointer; padding: 6px 10px;
   border-radius: var(--radius); font-size: 14px; font-weight: 600;
-  color: var(--gray-700); transition: var(--transition);
+  color: var(--text-primary); transition: var(--transition);
 }
-.user-avatar-btn:hover { background: var(--gray-100); }
+.user-avatar-btn:hover { background: var(--bg-secondary); }
 .user-avatar {
   width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
   border: 2px solid var(--primary);
@@ -52,21 +58,25 @@
 .user-name { max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dropdown-menu {
   position: absolute; top: calc(100% + 8px); right: 0;
-  background: white; border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl); border: 1px solid var(--gray-200);
+  background: var(--bg-primary); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl); border: 1px solid rgba(0,0,0,0.1);
   min-width: 220px; z-index: 200; overflow: hidden;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+:root.dark-mode .dropdown-menu {
+  border-color: rgba(255,255,255,0.1);
 }
 .dropdown-header { padding: 14px 16px; }
-.dropdown-user-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
-.dropdown-user-email { font-size: 12px; color: var(--gray-500); }
+.dropdown-user-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.dropdown-user-email { font-size: 12px; color: var(--text-secondary); }
 .dropdown-divider { border: none; border-top: 1px solid var(--gray-200); }
 .dropdown-item {
   display: flex; align-items: center; gap: 10px;
   width: 100%; padding: 10px 16px; font-size: 14px; font-weight: 500;
-  color: var(--gray-700); background: none; border: none; cursor: pointer;
+  color: var(--text-primary); background: none; border: none; cursor: pointer;
   text-decoration: none; transition: var(--transition); text-align: left;
 }
-.dropdown-item:hover { background: var(--gray-50); color: var(--primary); }
+.dropdown-item:hover { background: var(--bg-secondary); color: var(--primary); }
 .dropdown-item.text-danger { color: #b71c1c; }
 .dropdown-item.text-danger:hover { background: var(--primary-light); }
 .auth-buttons { display: flex; gap: 8px; }
