@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { wishlistAPI } from '../../services/api';
+import { useState } from 'react';
 
 const formatPrice = (price) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -8,8 +10,25 @@ const formatPrice = (price) =>
 export default function ProductCard({ book }) {
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   const discountPct = book.discount && book.discount > 0 ? book.discount : 0;
+
+  const handleAddToWishlist = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert('Vui lòng đăng nhập để thêm vào danh sách yêu thích');
+      return;
+    }
+    try {
+      await wishlistAPI.addToWishlist(book._id);
+      setIsInWishlist(true);
+      alert('✅ Đã thêm vào danh sách yêu thích');
+    } catch (err) {
+      console.error('Lỗi thêm wishlist:', err);
+      alert('❌ Lỗi thêm vào danh sách yêu thích');
+    }
+  };
 
   return (
     <div className="product-card animate-fadeInUp">
@@ -28,7 +47,7 @@ export default function ProductCard({ book }) {
           </div>
         </div>
       </Link>
-      <div className="info">
+        <div className="info">
         <Link to={`/books/${book._id}`}>
           <p className="title">{book.title}</p>
         </Link>
@@ -47,6 +66,28 @@ export default function ProductCard({ book }) {
           </div>
         )}
         <p className="sold">Đã bán: {(book.sold || 0).toLocaleString()}</p>
+        
+        {/* Nút Add to Wishlist */}
+        <button 
+          onClick={handleAddToWishlist}
+          style={{
+            width: '100%',
+            padding: '8px',
+            marginTop: '8px',
+            background: isInWishlist ? '#ff6b6b' : '#f0f0f0',
+            color: isInWishlist ? 'white' : '#333',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '13px',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => { if (!isInWishlist) e.target.style.background = '#e8e8e8'; }}
+          onMouseOut={(e) => { if (!isInWishlist) e.target.style.background = '#f0f0f0'; }}
+        >
+          {isInWishlist ? '❤️ Đã thích' : '🤍 Thích'}
+        </button>
       </div>
     </div>
   );

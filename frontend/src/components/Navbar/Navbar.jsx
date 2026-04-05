@@ -91,6 +91,12 @@ export default function Navbar() {
                   <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                     👤 Thông tin tài khoản
                   </Link>
+                  <Link to="/wishlist" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    ❤️ Danh sách yêu thích
+                  </Link>
+                  <Link to="/search-history" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                    🔍 Lịch sử tìm kiếm
+                  </Link>
                   <div className="dropdown-divider" />
                   <button className="dropdown-item text-danger" onClick={() => { logout(); setDropdownOpen(false); }}>
                     🚪 Đăng xuất
